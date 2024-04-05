@@ -20,7 +20,7 @@ function openChats() {
 
                 var streamBadge = document.createElement("img");
                 streamBadge.src = `channel/${extra.channel}.png`;
-                streamBadge.id = "badge";
+                streamBadge.id = "streambadge";
                 
                 var userMessageSeperator = document.createElement("div");
                 userMessageSeperator.innerText = ": ";
@@ -64,7 +64,7 @@ function openChats() {
                     var y = Number(locations[1]) + 1;
                     var replace = message.slice(x, y);
 
-                    messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="badge">`);
+                    messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="emote">`);
                 }
 
                 
