@@ -21,6 +21,7 @@ function openChats() {
                 var streamBadge = document.createElement("img");
                 streamBadge.src = `channel/${extra.channel}.png`;
                 streamBadge.id = "streambadge";
+                streamBadge.title = `${extra.channel}`;
                 
                 var userMessageSeperator = document.createElement("div");
                 userMessageSeperator.innerText = ": ";
@@ -33,17 +34,20 @@ function openChats() {
                         var badge = document.createElement("img");
                         badge.src = `${key}/${badgesJSON[key]}.png`
                         badge.id = "badge";
+                        badge.title = `${key} ${badgesJSON[key]}`;
                         newMessage.append(badge);
                     } else if (key == "subscriber") {
                         if(badgesJSON[key] > 12) {
                             var badge = document.createElement("img");
                             badge.src = `${key}/12.png`
                             badge.id = "badge";
+                            badge.title = `${key} ${badgesJSON[key]}`;
                             newMessage.append(badge);
                         } else {
                             var badge = document.createElement("img");
                             badge.src = `${key}/${badgesJSON[key]}.png`
                             badge.id = "badge";
+                            badge.title = `${key} ${badgesJSON[key]}`;
                             newMessage.append(badge);
                         }
 
@@ -64,12 +68,8 @@ function openChats() {
                     var y = Number(locations[1]) + 1;
                     var replace = message.slice(x, y);
 
-                    messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="emote">`);
+                    messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="emote" title="${replace}">`);
                 }
-
-                
-
-
 
                 newMessage.append(username);
                 newMessage.append(userMessageSeperator);
