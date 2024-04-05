@@ -24,7 +24,7 @@ function openChats() {
                 streamBadge.title = `${extra.channel}`;
                 
                 var userMessageSeperator = document.createElement("div");
-                userMessageSeperator.innerText = ": ";
+                userMessageSeperator.innerText = ":" + String.fromCharCode(160);
 
                 newMessage.append(streamBadge);
 
@@ -55,7 +55,7 @@ function openChats() {
                 }
 
                 var messageText = document.createElement("div");
-                messageText.innerText = String.fromCharCode(160) + `${message}`;
+                messageText.innerText = `${message}`;
 
                 //Add emotes to messages
                 const messageEmotes = extra.messageEmotes;
