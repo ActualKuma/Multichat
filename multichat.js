@@ -57,6 +57,7 @@ function openChats() {
                 var messageText = document.createElement("div");
                 messageText.innerText = String.fromCharCode(160) + `${message}`;
 
+                //Add emotes to messages
                 const messageEmotes = extra.messageEmotes;
                 for(var key in extra.messageEmotes) {
                     emoteLocationArray = messageEmotes[key];
@@ -70,6 +71,18 @@ function openChats() {
 
                     messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="emote" title="${replace}">`);
                 }
+
+                //turn links into hyperlinks
+                if(message.includes("http://") || message.includes("https://")) {
+                    var messageWords = [];
+                    messageWords = message.split(" ");
+                    for(var w = 0; w < messageWords.length; w++) {
+                        if(messageWords[w].includes("http://") || messageWords[w].includes("https://")) {
+                            messageText.innerHTML = messageText.innerHTML.replaceAll(messageWords[w], `<a href="${messageWords[w]}">${messageWords[w]}</a>`);
+                        }
+                    }
+                }
+
 
                 newMessage.append(username);
                 newMessage.append(userMessageSeperator);
