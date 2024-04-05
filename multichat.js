@@ -53,8 +53,6 @@ function openChats() {
                 var messageText = document.createElement("div");
                 messageText.innerText = `${message}`;
 
-                console.log(extra.messageEmotes);
-
                 const messageEmotes = extra.messageEmotes;
                 for(var key in extra.messageEmotes) {
                     emoteLocationArray = messageEmotes[key];
@@ -65,8 +63,6 @@ function openChats() {
                     var x = Number(locations[0]);
                     var y = Number(locations[1]) + 1;
                     var replace = message.slice(x, y);
-
-                    console.log(`X:${x} Y:${y} ${replace}`);
 
                     messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="badge">`);
                 }
