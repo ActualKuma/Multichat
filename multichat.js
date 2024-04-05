@@ -69,7 +69,7 @@ function openChats() {
 
                     console.log(`${x} ${y} ${before} + ${after}`);
 
-                    messageText.innerHTML = before + `<img src="https://static-cdn.jtvnw.net/emoticons/v1/${key}/2.0" id="badge">` + after;
+                    messageText.innerHTML = before + `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="badge">` + after;
                 }
 
                 
