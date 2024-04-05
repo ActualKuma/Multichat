@@ -6,10 +6,10 @@ body {
 }
 li {
     list-style-type: none;
+    padding-bottom:5px;
 }
 
 div {
-    white-space: nowrap;
     display: inline-block;
     color: ffffff;
 }
@@ -40,6 +40,5 @@ div {
 #badge {
     width:15px;
     height:15px;
-    border-radius: 50%;
-    padding: 2px;
+    padding-right: 5px;
 }

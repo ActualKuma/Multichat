@@ -23,12 +23,41 @@ function openChats() {
                 streamBadge.id = "badge";
 
                 console.log(extra.userBadges);
+                
+                var userMessageSeperator = document.createElement("div");
+                userMessageSeperator.innerText = ": ";
 
                 var messageText = document.createElement("div");
-                messageText.innerText = `: ${message}`;
+                messageText.innerText = `${message}`;
                 //newMessage.innerText = `${user}: ${message}`;
                 newMessage.append(streamBadge);
+
+                const badgesJSON = extra.userBadges;
+                for(var key in extra.userBadges) {
+                    if(key == "bits" || key == "broadcaster" || key == "founder" || key == "moderator" || key == "partner" || key == "sub-gift-leader" || key == "sub-gift-leader" || key == "sub-gifter") {
+                        var badge = document.createElement("img");
+                        badge.src = `${key}/${badgesJSON[key]}.png`
+                        badge.id = "badge";
+                        newMessage.append(badge);
+                    } else if (key == "subscriber") {
+                        if(badgesJSON[key] > 12) {
+                            var badge = document.createElement("img");
+                            badge.src = `${key}/12.png`
+                            badge.id = "badge";
+                            newMessage.append(badge);
+                        } else {
+                            var badge = document.createElement("img");
+                            badge.src = `${key}/${badgesJSON[key]}.png`
+                            badge.id = "badge";
+                            newMessage.append(badge);
+                        }
+
+                    }
+                }
+
+
                 newMessage.append(username);
+                newMessage.append(userMessageSeperator);
                 newMessage.append(messageText);
 
                 chat.append(newMessage);
