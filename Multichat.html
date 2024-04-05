@@ -1,0 +1,27 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.jsdelivr.net/npm/comfy.js@latest/dist/comfy.min.js"></script>
+        <link rel="stylesheet" href="Multichat.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+        <title>Twitch chat</title>
+    </head>
+    <body>
+        <form id="frm1" action="/action_page.php">
+            <table>
+                <td class="displayinline">
+                    <div class="inline">Enter Streams:</div> <input class="inline" type="text" name="streams" id="streams">
+                    <input class="inline" type="button" onclick="openChats()" value="Open Chats"><br>
+                </td>
+            </table>
+        </form>
+          
+        <div id="chat">
+            <ul id="scrollable">
+            </ul>
+        </div>
+    </body>
+    <script src="multichat.js"></script>
+</html>
