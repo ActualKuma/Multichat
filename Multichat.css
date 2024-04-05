@@ -20,7 +20,7 @@ div {
 }
 
 #scrollable {
-    height: 100%;
+    height: 90%;
     overflow: auto;
 }
 
@@ -35,4 +35,11 @@ div {
 
 #streams {
     width:600px;
+}
+
+#badge {
+    width:15px;
+    height:15px;
+    border-radius: 50%;
+    padding: 2px;
 }

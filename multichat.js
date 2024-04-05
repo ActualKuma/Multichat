@@ -18,11 +18,16 @@ function openChats() {
                     username.style.color = "#6441a5";
                 }
 
-                console.log(extra.userBadges)
+                var streamBadge = document.createElement("img");
+                streamBadge.src = `channel/${extra.channel}.png`;
+                streamBadge.id = "badge";
+
+                console.log(extra.userBadges);
 
                 var messageText = document.createElement("div");
                 messageText.innerText = `: ${message}`;
                 //newMessage.innerText = `${user}: ${message}`;
+                newMessage.append(streamBadge);
                 newMessage.append(username);
                 newMessage.append(messageText);
 
