@@ -30,7 +30,7 @@ function openChats() {
 
                 const badgesJSON = extra.userBadges;
                 for(var key in extra.userBadges) {
-                    if(key == "bits" || key == "broadcaster" || key == "founder" || key == "moderator" || key == "partner" || key == "sub-gift-leader" || key == "sub-gift-leader" || key == "sub-gifter") {
+                    if(key == "bits" || key == "broadcaster" || key == "founder" || key == "moderator" || key == "partner" || key == "sub-gift-leader" || key == "sub-gift-leader" || key == "sub-gifter" || key == "vip") {
                         var badge = document.createElement("img");
                         badge.src = `${key}/${badgesJSON[key]}.png`
                         badge.id = "badge";
@@ -55,7 +55,7 @@ function openChats() {
                 }
 
                 var messageText = document.createElement("div");
-                messageText.innerText = `${message}`;
+                messageText.innerText = String.fromCharCode(160) + `${message}`;
 
                 const messageEmotes = extra.messageEmotes;
                 for(var key in extra.messageEmotes) {
