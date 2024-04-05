@@ -22,14 +22,11 @@ function openChats() {
                 streamBadge.src = `channel/${extra.channel}.png`;
                 streamBadge.id = "badge";
 
-                console.log(extra.userBadges);
+                console.log(extra.messageEmotes);
                 
                 var userMessageSeperator = document.createElement("div");
                 userMessageSeperator.innerText = ": ";
 
-                var messageText = document.createElement("div");
-                messageText.innerText = `${message}`;
-                //newMessage.innerText = `${user}: ${message}`;
                 newMessage.append(streamBadge);
 
                 const badgesJSON = extra.userBadges;
@@ -54,6 +51,32 @@ function openChats() {
 
                     }
                 }
+
+                var messageText = document.createElement("div");
+                messageText.innerText = `${message}`;
+
+                const messageEmotes = extra.messageEmotes;
+                for(var key in extra.messageEmotes) {
+                    var emote = document.createElement("img");
+                    emote.src = `https://static-cdn.jtvnw.net/emoticons/v1/${key}/2.0`;
+                    emote.id = "badge";
+
+                    emoteLocationArray = messageEmotes[key];
+
+                    emoteLocation = emoteLocationArray[0].split('-');
+                    
+                    var x = Number(emoteLocation[0]);
+                    var y = Number(emoteLocation[1]) + 1;
+                    var before = messageText.innerHTML.slice(0, x);
+                    var after = messageText.innerHTML.slice(y, message.size)
+
+
+                    console.log(`${x} ${y} ${before} + ${after}`);
+
+                    messageText.innerHTML = before + `<img src="https://static-cdn.jtvnw.net/emoticons/v1/${key}/2.0" id="badge">` + after;
+                }
+
+                
 
 
                 newMessage.append(username);
