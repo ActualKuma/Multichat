@@ -57,10 +57,6 @@ function openChats() {
 
                 const messageEmotes = extra.messageEmotes;
                 for(var key in extra.messageEmotes) {
-                    var emote = document.createElement("img");
-                    emote.src = `https://static-cdn.jtvnw.net/emoticons/v1/${key}/2.0`;
-                    emote.id = "badge";
-
                     emoteLocationArray = messageEmotes[key];
 
                     emoteLocation = emoteLocationArray[0].split('-');
