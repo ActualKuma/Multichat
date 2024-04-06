@@ -30,7 +30,13 @@ function openChats() {
 
                 //Username
                 var username = document.createElement("div")
-                username.innerText = `${user}`;
+                console.log(`${user} ${extra.username} ${extra.displayName}`);
+                if(user.toLowerCase() != extra.username.toLowerCase()) {
+                    username.innerText = `${user}(${extra.username})`;
+                } else {
+                    username.innerText = `${user}`;
+                }
+                
 
                 if(extra.userColor == null) {
                     username.style.color = "#6441a5";
