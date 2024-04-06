@@ -6,6 +6,7 @@
  * By ActualKuma
  * -------------------------------------------------------------------------
  */
+
 function submitForm(event) {
     event.preventDefault();
     openChats();
@@ -37,11 +38,27 @@ function openChats() {
                 }
 
                 //Stream Identifier
-                var streamBadge = document.createElement("img");
-                streamBadge.src = `channel/${extra.channel}.png`;
-                streamBadge.id = "streambadge";
-                streamBadge.title = `${extra.channel}`;
-                newMessage.append(streamBadge);
+                const url = `channel/${extra.channel}.png`;
+                fetch(url, { method: "HEAD" }) 
+                .then(response => { 
+                    if (response.ok) { 
+                        var streamBadge = document.createElement("img");
+                        streamBadge.src = url;
+                        streamBadge.id = "streambadge";
+                        streamBadge.title = `${extra.channel}`;
+                        newMessage.insertAdjacentElement("afterbegin", streamBadge);
+                    } else { 
+                        var streamBadge = document.createElement("div");
+                        streamBadge.innerText = extra.channel[0] + extra.channel[1];
+                        streamBadge.id = "streambadge";
+                        streamBadge.style.fontWeight = "bold";
+                        newMessage.insertAdjacentElement("afterbegin", streamBadge);
+                    } 
+                }) 
+                .catch(error => { 
+                    console.log("An error occurred: ", error); 
+                }); 
+                
 
                 //Add chat badges
                 const badgesJSON = extra.userBadges;
