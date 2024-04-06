@@ -7,6 +7,17 @@
  * -------------------------------------------------------------------------
  */
 
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const openStreams = urlParams.get("openStreams");
+
+if(openStreams != null) {
+    let input = document.getElementById("streams");
+    input.value = openStreams;
+
+    openChats();
+}
+
 function submitForm(event) {
     event.preventDefault();
     openChats();
