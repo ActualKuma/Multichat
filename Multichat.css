@@ -38,8 +38,12 @@ div {
 
 #scrollable {
     height: 94%;
-    overflow: auto;
-    overflow-y: hidden; /* Hide vertical scrollbar */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: -17px;
+    overflow-y: scroll; /* Hide vertical scrollbar */
     overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
