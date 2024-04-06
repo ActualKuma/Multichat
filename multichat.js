@@ -6,7 +6,14 @@
  * By ActualKuma
  * -------------------------------------------------------------------------
  */
+function submitForm(event) {
+    event.preventDefault();
+    openChats();
+    return false;
+}
+
 function openChats() {
+    
     var channels = []
 
     let input = document.getElementById("streams").value;
