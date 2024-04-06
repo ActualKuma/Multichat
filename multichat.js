@@ -148,22 +148,32 @@ function openChats() {
             }
 
             //Stream Identifier
-            var streamBadge = document.createElement("img");
-            streamBadge.src = `channel/${extra.channel}.png`;
-            streamBadge.id = "streambadge";
-            streamBadge.title = `${extra.channel}`;
-            newMessage.append(streamBadge);
+            const url = `channel/${extra.channel}.png`;
+            fetch(url, { method: "HEAD" }) 
+            .then(response => { 
+                if (response.ok) { 
+                    var streamBadge = document.createElement("img");
+                    streamBadge.src = url;
+                    streamBadge.id = "streambadge";
+                    streamBadge.title = `${extra.channel}`;
+                    newMessage.insertAdjacentElement("afterbegin", streamBadge);
+                } else { 
+                    var streamBadge = document.createElement("div");
+                    streamBadge.innerText = extra.channel[0] + extra.channel[1];
+                    streamBadge.id = "streambadge";
+                    streamBadge.style.fontWeight = "bold";
+                    newMessage.insertAdjacentElement("afterbegin", streamBadge);
+                } 
+            }) 
+            .catch(error => { 
+                console.log("An error occurred: ", error); 
+            }); 
+            
 
             //Add chat badges
             const badgesJSON = extra.userBadges;
             for(var key in extra.userBadges) {
-                if(key == "bits" || key == "broadcaster" || key == "founder" || key == "moderator" || key == "partner" || key == "sub-gift-leader" || key == "sub-gift-leader" || key == "sub-gifter" || key == "vip") {
-                    var badge = document.createElement("img");
-                    badge.src = `${key}/${badgesJSON[key]}.png`
-                    badge.id = "badge";
-                    badge.title = `${key} ${badgesJSON[key]}`;
-                    newMessage.append(badge);
-                } else if (key == "subscriber") {
+                if (key == "subscriber") {
                     if(badgesJSON[key] > 12) {
                         var badge = document.createElement("img");
                         badge.src = `${key}/12.png`
@@ -178,6 +188,12 @@ function openChats() {
                         newMessage.append(badge);
                     }
 
+                } else {
+                    var badge = document.createElement("img");
+                    badge.src = `${key}/${badgesJSON[key]}.png`
+                    badge.id = "badge";
+                    badge.title = `${key} ${badgesJSON[key]}`;
+                    newMessage.append(badge);
                 }
             }
 
@@ -187,7 +203,7 @@ function openChats() {
 
             //Message
             var messageText = document.createElement("div");
-            messageText.innerText = `!${message}`;
+            messageText.innerText = `${message}`;
 
             //Add emotes to messages
             const messageEmotes = extra.messageEmotes;
