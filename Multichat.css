@@ -12,9 +12,16 @@
 body {
     background: #121212;
 }
+
+ul {
+    list-style: none;
+    padding:0px;
+}
+
 li {
     list-style-type: none;
     padding-bottom:5px;
+    padding-left: 0px;
 }
 
 div {
