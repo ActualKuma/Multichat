@@ -1,3 +1,11 @@
+/*
+ * -------------------------------------------------------------------------
+ * MultiChat: Combines multiple twitch chats into one for easy 
+ * readability for streamers
+ *  
+ * By ActualKuma
+ * -------------------------------------------------------------------------
+ */
 function openChats() {
     var channels = []
 
