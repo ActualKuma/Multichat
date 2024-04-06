@@ -19,9 +19,23 @@ body {
     display: block;
 }
 
+#frm1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+#credits:hover {
+    display: block;
+}
+
 ul {
     list-style: none;
-    padding:0px;
+    padding-left: 5px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 li {
@@ -47,6 +61,7 @@ div {
     bottom: 0;
     left: 0;
     right: -17px;
+    z-index: 0;
     overflow-y: scroll; /* Hide vertical scrollbar */
     overflow-x: hidden; /* Hide horizontal scrollbar */
 }
@@ -89,6 +104,8 @@ div {
     vertical-align: top;
     float: right;
     text-align: right;
+    position: relative;
+    z-index: 20;
     padding-bottom: 5px;
 }
 
