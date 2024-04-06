@@ -1,0 +1,20 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Google Cloud Storage Bucket Sync (GCP,GCS)
+        uses: patrickwyler/gcs-bucket-sync-action@1.4
+        with:
+          secrets: ${{ secrets.google_service_account_credentials }}
+          bucket: 'multichat.dev'
+          exclude: '.*\.md$|\.gitignore$|\.git/.*$|\.github/.*$'
