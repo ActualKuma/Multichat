@@ -19,7 +19,7 @@ li {
 
 div {
     display: inline-block;
-    color: ffffff;
+    color: #ffffff;
 }
 
 #chat {
@@ -28,7 +28,7 @@ div {
 }
 
 #scrollable {
-    height: 97%;
+    height: 94%;
     overflow: auto;
 }
 
@@ -63,4 +63,35 @@ div {
     width:20px;
     height:20px;
     vertical-align: middle;
+}
+
+#credits {
+    vertical-align: top;
+    float: right;
+    text-align: right;
+    padding-bottom: 5px;
+}
+
+a.kuma {
+    text-decoration: none;
+}
+
+a:link.kuma {
+    color: #ffffff;
+}
+
+a:visited.kuma {
+    color: #ffffff;
+}
+
+a:visited.kuma {
+    color: #ffffff;
+}
+
+a:hover.kuma {
+    color: #808080;
+}
+
+a:active.kuma {
+    color: #f1d634;
 }
