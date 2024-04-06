@@ -63,13 +63,7 @@ function openChats() {
                 //Add chat badges
                 const badgesJSON = extra.userBadges;
                 for(var key in extra.userBadges) {
-                    if(key == "bits" || key == "broadcaster" || key == "founder" || key == "moderator" || key == "partner" || key == "sub-gift-leader" || key == "sub-gift-leader" || key == "sub-gifter" || key == "vip") {
-                        var badge = document.createElement("img");
-                        badge.src = `${key}/${badgesJSON[key]}.png`
-                        badge.id = "badge";
-                        badge.title = `${key} ${badgesJSON[key]}`;
-                        newMessage.append(badge);
-                    } else if (key == "subscriber") {
+                    if (key == "subscriber") {
                         if(badgesJSON[key] > 12) {
                             var badge = document.createElement("img");
                             badge.src = `${key}/12.png`
@@ -84,6 +78,12 @@ function openChats() {
                             newMessage.append(badge);
                         }
 
+                    } else {
+                        var badge = document.createElement("img");
+                        badge.src = `${key}/${badgesJSON[key]}.png`
+                        badge.id = "badge";
+                        badge.title = `${key} ${badgesJSON[key]}`;
+                        newMessage.append(badge);
                     }
                 }
 
