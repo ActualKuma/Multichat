@@ -3,7 +3,7 @@
  * MultiChat: Combines multiple twitch chats into one for easy 
  * readability for streamers
  *  
- * By ActualKuma
+ * By ActualKuma #f1d634
  * -------------------------------------------------------------------------
  */
 
@@ -31,10 +31,16 @@ function openChats() {
                 //Username
                 var username = document.createElement("div")
                 username.innerText = `${user}`;
-                username.style.color = `${extra.userColor}`;
 
                 if(extra.userColor == null) {
                     username.style.color = "#6441a5";
+                } else {
+                    var colour = tinycolor(`${extra.userColor}`);
+                    if(colour.getBrightness() < 50) {
+                        colour.lighten();
+                        username.style.textShadow = "1px 1px 1px #ffffff"
+                    }
+                    username.style.color = colour.toString();
                 }
 
                 //Stream Identifier
