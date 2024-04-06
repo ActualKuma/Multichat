@@ -30,7 +30,6 @@ function openChats() {
 
                 //Username
                 var username = document.createElement("div")
-                console.log(`${user} ${extra.username} ${extra.displayName}`);
                 if(user.toLowerCase() != extra.username.toLowerCase()) {
                     username.innerText = `${user}(${extra.username})`;
                 } else {
@@ -152,11 +151,22 @@ function openChats() {
 
             //Username
             var username = document.createElement("div")
-            username.innerText = `${user}`;
-            username.style.color = `${extra.userColor}`;
+            if(user.toLowerCase() != extra.username.toLowerCase()) {
+                username.innerText = `${user}(${extra.username})`;
+            } else {
+                username.innerText = `${user}`;
+            }
+            
 
             if(extra.userColor == null) {
                 username.style.color = "#6441a5";
+            } else {
+                var colour = tinycolor(`${extra.userColor}`);
+                if(colour.getBrightness() < 50) {
+                    colour.lighten();
+                    username.style.textShadow = "1px 1px 1px #ffffff"
+                }
+                username.style.color = colour.toString();
             }
 
             //Stream Identifier
@@ -215,7 +225,7 @@ function openChats() {
 
             //Message
             var messageText = document.createElement("div");
-            messageText.innerText = `${message}`;
+            messageText.innerText = `!${message}`;
 
             //Add emotes to messages
             const messageEmotes = extra.messageEmotes;
