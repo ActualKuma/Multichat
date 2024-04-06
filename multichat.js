@@ -6,10 +6,13 @@
  * By ActualKuma
  * -------------------------------------------------------------------------
  */
-function submitForm(event) {
-    event.preventDefault();
-    openChats();
-    return false;
+const clientId = "6v8y5ouq26qh6fnqy7qrpsnl9qifcp";
+const baseUrl = window.location.origin;
+
+function login() {
+    ComfyTwitch.Login( clientId, `https://multichat.dev`, [ "user:read:email" ] );
+    var form2 = document.getElementById("frm2");
+    form2.style.display = "none";
 }
 
 function openChats() {
@@ -37,11 +40,21 @@ function openChats() {
                 }
 
                 //Stream Identifier
-                var streamBadge = document.createElement("img");
-                streamBadge.src = `channel/${extra.channel}.png`;
-                streamBadge.id = "streambadge";
-                streamBadge.title = `${extra.channel}`;
-                newMessage.append(streamBadge);
+                ComfyTwitch.Check()
+                .then( result => {
+                    if( result ) {
+                        console.log("logged in");
+                        getUserAvatar(extra.channel);
+                    }
+                    else {
+                        console.log("logged out")
+                        var streamBadge = document.createElement("img");
+                        streamBadge.src = `channel/${extra.channel}.png`;
+                        streamBadge.id = "streambadge";
+                        streamBadge.title = `${extra.channel}`;
+                        newMessage.append(streamBadge);
+                    }
+                });
 
                 //Add chat badges
                 const badgesJSON = extra.userBadges;
@@ -121,4 +134,12 @@ function openChats() {
 
     var form = document.getElementById("frm1");
     form.style.display = "none";
+}
+
+async function getUserAvatar(streamer) {
+    let streamerProfile = await ComfyTwitch.getUser(clientId, streamer);
+
+    console.log(streamerProfile);
+
+    return streamerProfile;
 }
