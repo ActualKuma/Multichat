@@ -15,6 +15,10 @@ body {
     overflow-x: hidden; /* Hide horizontal scrollbar */
 }
 
+#chat:hover + #credits {
+    display: block;
+}
+
 ul {
     list-style: none;
     padding:0px;
@@ -81,6 +85,7 @@ div {
 }
 
 #credits {
+    display: none;
     vertical-align: top;
     float: right;
     text-align: right;
