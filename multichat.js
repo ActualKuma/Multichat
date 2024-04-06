@@ -8,8 +8,11 @@ function openChats() {
 
     for(var i = 0; i < channels.length ; i++) {
         ComfyJS.onChat = (user, message, flags, self, extra) => {
+                //Message Container
                 var newMessage = document.createElement("li");
                 newMessage.style.listStyleType = "none";
+
+                //Username
                 var username = document.createElement("div")
                 username.innerText = `${user}`;
                 username.style.color = `${extra.userColor}`;
@@ -18,16 +21,14 @@ function openChats() {
                     username.style.color = "#6441a5";
                 }
 
+                //Stream Identifier
                 var streamBadge = document.createElement("img");
                 streamBadge.src = `channel/${extra.channel}.png`;
                 streamBadge.id = "streambadge";
                 streamBadge.title = `${extra.channel}`;
-                
-                var userMessageSeperator = document.createElement("div");
-                userMessageSeperator.innerText = ":" + String.fromCharCode(160);
-
                 newMessage.append(streamBadge);
 
+                //Add chat badges
                 const badgesJSON = extra.userBadges;
                 for(var key in extra.userBadges) {
                     if(key == "bits" || key == "broadcaster" || key == "founder" || key == "moderator" || key == "partner" || key == "sub-gift-leader" || key == "sub-gift-leader" || key == "sub-gifter" || key == "vip") {
@@ -54,6 +55,11 @@ function openChats() {
                     }
                 }
 
+                //Message Seperator
+                var userMessageSeperator = document.createElement("div");
+                userMessageSeperator.innerText = ":" + String.fromCharCode(160);
+
+                //Message
                 var messageText = document.createElement("div");
                 messageText.innerText = `${message}`;
 
@@ -83,13 +89,14 @@ function openChats() {
                     }
                 }
 
-
+                //Add message text
                 newMessage.append(username);
                 newMessage.append(userMessageSeperator);
                 newMessage.append(messageText);
 
                 chat.append(newMessage);
 
+                //Scroll chat to bottom
                 var chatbox = document.getElementById("scrollable")
                 chatbox.scrollTop = chatbox.scrollHeight;
         }
