@@ -3,7 +3,7 @@
  * MultiChat: Combines multiple twitch chats into one for easy 
  * readability for streamers
  *  
- * By ActualKuma #f1d634
+ * By ActualKuma
  * -------------------------------------------------------------------------
  */
 
