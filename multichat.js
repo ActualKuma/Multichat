@@ -32,7 +32,7 @@ function openChats() {
     setIgnore();
     
     var channels = []
-    var streams = "";
+    var streams = null;
 
     let input = document.getElementById("streams").value;
     channels = input.split(" ");
@@ -40,7 +40,12 @@ function openChats() {
     var chat = document.querySelector("#chat>ul");
 
     for(var i = 0; i < channels.length ; i++) {
-        streams = `${streams} ${channels[i]}`;
+        if(streams == null) {
+            streams = `${channels[i]}`;
+        } else {
+            streams = `${streams}, ${channels[i]}`;
+        }
+        
         ComfyJS.onChat = (user, message, flags, self, extra) => {
             if(!ignoredUsers.includes(user.toLowerCase())) {
                 //Message Container
