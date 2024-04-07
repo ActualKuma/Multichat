@@ -43,7 +43,7 @@ function openChats() {
 
     for(var i = 0; i < channels.length ; i++) {
         ComfyJS.onChat = (user, message, flags, self, extra) => {
-            if(!ignoreUsers.includes(extra.username)) {
+            if(!ignoredUsers.includes(user.toLowerCase())) {
                 //Message Container
                 var newMessage = document.createElement("li");
                 newMessage.style.listStyleType = "none";
@@ -168,7 +168,7 @@ function openChats() {
         }
 
         ComfyJS.onCommand = (user, message, flags, self, extra) => {
-            if(!ignoreUsers.includes(user)) {
+            if(!ignoredUsers.includes(user.toLowerCase())) {
                 //Message Container
                 var newMessage = document.createElement("li");
                 newMessage.style.listStyleType = "none";
@@ -302,31 +302,4 @@ function openChats() {
 
     var form = document.getElementById("frm1");
     form.style.display = "none";
-}
-
-function checkLoadedAll(channel, type, extra, value, args) {
-    if (args[type][extra] == false && value == null) {
-        loadedAssets[channel].loaded[type][extra] = null;
-    }
-    if (args[type][extra] == true && loadedAssets[channel].loaded[type][extra] == false && value == true) {
-        loadedAssets[channel].loaded[type][extra] = true;
-    }
-
-    var trueVals = [];
-    Object.keys(loadedAssets[channel].loaded).forEach((e, ind) => {
-        e = loadedAssets[channel].loaded[e];
-        var allTrue = true;
-        Object.keys(e).forEach(ele => {
-            ele = e[ele];
-            if (ele == false) {
-                allTrue = false;
-            }
-        })
-
-        trueVals.push(allTrue);
-    });
-
-    loadedAssets[channel].allLoaded = !trueVals.includes(false);
-    return !trueVals.includes(false);
-
 }
