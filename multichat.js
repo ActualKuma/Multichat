@@ -66,6 +66,7 @@ function openChats() {
                     }
                     username.style.color = colour.toString();
                 }
+                username.classList.add("inline");
 
                 //Stream Identifier
                 const url = `channel/${extra.channel}.png`;
@@ -76,12 +77,14 @@ function openChats() {
                         streamBadge.src = url;
                         streamBadge.id = "streambadge";
                         streamBadge.title = `${extra.channel}`;
+                        streamBadge.classList.add("inline");
                         newMessage.insertAdjacentElement("afterbegin", streamBadge);
                     } else { 
                         var streamBadge = document.createElement("div");
                         streamBadge.innerText = extra.channel[0] + extra.channel[1];
                         streamBadge.id = "streambadge";
                         streamBadge.style.fontWeight = "bold";
+                        streamBadge.classList.add("inline");
                         newMessage.insertAdjacentElement("afterbegin", streamBadge);
                     } 
                 }) 
@@ -99,12 +102,14 @@ function openChats() {
                             badge.src = `${key}/12.png`
                             badge.id = "badge";
                             badge.title = `${key} ${badgesJSON[key]}`;
+                            badge.classList.add("inline");
                             newMessage.append(badge);
                         } else {
                             var badge = document.createElement("img");
                             badge.src = `${key}/${badgesJSON[key]}.png`
                             badge.id = "badge";
                             badge.title = `${key} ${badgesJSON[key]}`;
+                            badge.classList.add("inline");
                             newMessage.append(badge);
                         }
 
@@ -113,6 +118,7 @@ function openChats() {
                         badge.src = `${key}/${badgesJSON[key]}.png`
                         badge.id = "badge";
                         badge.title = `${key} ${badgesJSON[key]}`;
+                        badge.classList.add("inline");
                         newMessage.append(badge);
                     }
                 }
@@ -120,10 +126,12 @@ function openChats() {
                 //Message Seperator
                 var userMessageSeperator = document.createElement("div");
                 userMessageSeperator.innerText = ":" + String.fromCharCode(160);
+                userMessageSeperator.classList.add("inline");
 
                 //Message
                 var messageText = document.createElement("div");
                 messageText.innerText = `${message}`;
+                messageText.classList.add("inline");
 
                 //Add emotes to messages
                 const messageEmotes = extra.messageEmotes;
@@ -191,6 +199,7 @@ function openChats() {
                     }
                     username.style.color = colour.toString();
                 }
+                username.classList.add("inline");
 
                 //Stream Identifier
                 const url = `channel/${extra.channel}.png`;
@@ -201,12 +210,14 @@ function openChats() {
                         streamBadge.src = url;
                         streamBadge.id = "streambadge";
                         streamBadge.title = `${extra.channel}`;
+                        streamBadge.classList.add("inline");
                         newMessage.insertAdjacentElement("afterbegin", streamBadge);
                     } else { 
                         var streamBadge = document.createElement("div");
                         streamBadge.innerText = extra.channel[0] + extra.channel[1];
                         streamBadge.id = "streambadge";
                         streamBadge.style.fontWeight = "bold";
+                        streamBadge.classList.add("inline");
                         newMessage.insertAdjacentElement("afterbegin", streamBadge);
                     } 
                 }) 
@@ -224,12 +235,14 @@ function openChats() {
                             badge.src = `${key}/12.png`
                             badge.id = "badge";
                             badge.title = `${key} ${badgesJSON[key]}`;
+                            badge.classList.add("inline");
                             newMessage.append(badge);
                         } else {
                             var badge = document.createElement("img");
                             badge.src = `${key}/${badgesJSON[key]}.png`
                             badge.id = "badge";
                             badge.title = `${key} ${badgesJSON[key]}`;
+                            badge.classList.add("inline");
                             newMessage.append(badge);
                         }
 
@@ -238,6 +251,7 @@ function openChats() {
                         badge.src = `${key}/${badgesJSON[key]}.png`
                         badge.id = "badge";
                         badge.title = `${key} ${badgesJSON[key]}`;
+                        badge.classList.add("inline");
                         newMessage.append(badge);
                     }
                 }
@@ -245,10 +259,12 @@ function openChats() {
                 //Message Seperator
                 var userMessageSeperator = document.createElement("div");
                 userMessageSeperator.innerText = ":" + String.fromCharCode(160);
+                userMessageSeperator.classList.add("inline");
 
                 //Message
                 var messageText = document.createElement("div");
                 messageText.innerText = `!${message}`;
+                messageText.classList.add("inline");
 
                 //Add emotes to messages
                 const messageEmotes = extra.messageEmotes;
