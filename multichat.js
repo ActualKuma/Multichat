@@ -16,23 +16,20 @@ var ignoredUsers = [];
 if(openStreams != null) {
     let input = document.getElementById("streams");
     input.value = openStreams;
-
     openChats();
-}
-
-if(ignoreUsers != null) {
-    ignoreUsers = ignoreUsers.toLowerCase();
-    ignoredUsers = ignoreUsers.split(" ");
-    console.log(ignoredUsers);
+} else {
+    checkIgnore();
 }
 
 function submitForm(event) {
     event.preventDefault();
     openChats();
+    checkIgnore();
     return false;
 }
 
 function openChats() {
+    setIgnore();
     
     var channels = []
 
@@ -302,4 +299,17 @@ function openChats() {
 
     var form = document.getElementById("frm1");
     form.style.display = "none";
+}
+
+function checkIgnore() {
+    if(ignoreUsers != null) {
+        let input = document.getElementById("ignore");
+        input.value = ignoreUsers;
+    }
+}
+
+function setIgnore() {
+    let input = document.getElementById("ignore").value;
+    ignoredUsers = input.split(" ");
+    console.log(`Ignoring users: ${input}`);
 }
