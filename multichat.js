@@ -23,8 +23,8 @@ if(openStreams != null) {
 
 function submitForm(event) {
     event.preventDefault();
-    openChats();
     checkIgnore();
+    openChats();
     return false;
 }
 
