@@ -94,7 +94,7 @@ div {
 }
 
 #emote {
-    width:20px;
+    width:auto;
     height:20px;
     vertical-align: middle;
 }
