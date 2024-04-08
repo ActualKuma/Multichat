@@ -47,7 +47,7 @@ function submitForm(event) {
 }
 
 function twitchLogin() {
-    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `http://localhost:8080/`, [ "user:read:email" ] );
+    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `https://multichat.dev`, [ "user:read:email" ] );
 }
 
 function twitchLogout() {
