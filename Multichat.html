@@ -12,7 +12,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.jsdelivr.net/npm/comfy.js@latest/dist/comfy.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/comfytwitch@latest/web/comfytwitch.min.js"></script>
+        <script src="comfytwitch.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.1/tinycolor.min.js"></script>
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <link rel="stylesheet" href="Multichat.css">
@@ -26,6 +26,10 @@
                     <div class="inline">Enter Streams:</div> <input class="inline" type="text" name="streams" id="streams">
                     <input class="inline" type="button" onclick="openChats()" value="Open Chats"><br>
                     <div class="inline" id="ignoreText">Ignore Users: </div> <input class="inline" type="text" name="ignore" id="ignore">
+                    <input class="inline" id="login" type="button" onclick="twitchLogin()" value="Twitch Login"><br>
+                    <div class="inline onlogged">FFZ:</div><input class="inline onlogged" type="checkbox" id="ffz" name="ffz">
+                    <div class="inline onlogged">BTTV:</div><input class="inline onlogged" type="checkbox" id="bttv" name="bttv">
+                    <div class="inline onlogged">7TV:</div><input class="inline onlogged" type="checkbox" id="7tv" name="7tv">
                 </td>
             </table>
         </form>
@@ -34,7 +38,10 @@
             <ul id="scrollable">
             </ul>
         </div>
-        <div id="credits">Created by <a class="kuma" href="https://github.com/ActualKuma/Multichat">ActualKuma</a></div>
+        <div id="credits">
+            Created by <a class="kuma" href="https://github.com/ActualKuma/Multichat">ActualKuma</a><br>
+            <input class="inline" id="logout" type="button" onclick="twitchLogout()" value="Twitch Logout">
+        </div>
     </body>
     <script src="multichat.js"></script>
 </html>
