@@ -70,10 +70,6 @@ function openChats() {
         }
     });
 
-    
-
-    document.title = `multichat.dev (${streams})`
-
     var form = document.getElementById("frm1");
     form.style.display = "none";
 }
@@ -380,6 +376,8 @@ function chatV1() {
 
         ComfyJS.Init(channels[i]);
     }
+
+    document.title = `multichat.dev (${streams})`
 }
 
 async function chatV2() {
@@ -698,6 +696,8 @@ async function chatV2() {
 
         ComfyJS.Init(channels[i]);
     }
+
+    document.title = `multichat.dev (${streams})`
 }
 
 function loadFFZ(streamerInfo) {
