@@ -396,13 +396,17 @@ async function chatV2() {
     for(var i = 0; i < channels.length ; i++) {
         var channelName = channels[i].toLowerCase();
         let user = await ComfyTwitch.GetUser(clientId, channelName); 
-
         streamerInfo[channelName] = {
             id: user["id"],
             profile_image_url: user["profile_image_url"],
             emotes: [],
-            badges: {}
+            badges: []
         };
+
+        let badges = await ComfyTwitch.GetBadges(clientId, streamerInfo[channelName].id);
+        let globalBadges = await ComfyTwitch.GetBadgesGlobal(clientId);
+
+        addBadges(badges, globalBadges, streamerInfo, channelName);
 
         let ffzEnabled = document.getElementById("ffz").checked;
         let bttvEnabled = document.getElementById("bttv").checked;
@@ -419,6 +423,8 @@ async function chatV2() {
         if(bttvEnabled) {
             loadBTTV(streamerInfo);
         }
+
+        console.log(streamerInfo);
 
         if(streams == null) {
             streams = `${channels[i]}`;
@@ -470,30 +476,21 @@ async function chatV2() {
                 //Add chat badges
                 const badgesJSON = extra.userBadges;
                 for(var key in extra.userBadges) {
-                    if (key == "subscriber") {
-                        if(badgesJSON[key] > 12) {
-                            var badge = document.createElement("img");
-                            badge.src = `${key}/12.png`
-                            badge.id = "badge";
-                            badge.title = `${key} ${badgesJSON[key]}`;
-                            badge.classList.add("inline");
-                            newMessage.append(badge);
-                        } else {
-                            var badge = document.createElement("img");
-                            badge.src = `${key}/${badgesJSON[key]}.png`
-                            badge.id = "badge";
-                            badge.title = `${key} ${badgesJSON[key]}`;
-                            badge.classList.add("inline");
-                            newMessage.append(badge);
+                    for(var index in infoForStreamer.badges) {
+                        var badge = infoForStreamer.badges[index];
+                        if(badge.set_id == key) {
+                            var versions = badge.versions;
+                            for(var index2 in versions) {
+                                if(versions[index2].id == badgesJSON[key]) {
+                                    var badge = document.createElement("img");
+                                    badge.src = versions[index2].image_url;
+                                    badge.id = "badge";
+                                    badge.title = `${key} ${badgesJSON[key]}`;
+                                    badge.classList.add("inline");
+                                    newMessage.append(badge);
+                                }
+                            }
                         }
-
-                    } else {
-                        var badge = document.createElement("img");
-                        badge.src = `${key}/${badgesJSON[key]}.png`
-                        badge.id = "badge";
-                        badge.title = `${key} ${badgesJSON[key]}`;
-                        badge.classList.add("inline");
-                        newMessage.append(badge);
                     }
                 }
 
@@ -537,8 +534,8 @@ async function chatV2() {
                 if(ffzEnabled || seventvEnabled || bttvEnabled) {
                     var messageWords = [];
                     messageWords = messageText.innerHTML.split(" ");
-                    for (var code in streamerInfo[extra.channel].emotes) {
-                        var emote = streamerInfo[extra.channel].emotes[code];
+                    for (var code in infoForStreamer.emotes) {
+                        var emote = infoForStreamer.emotes[code];
                         if(messageWords.includes(emote.name)) {
                             if(emote.type == "7tv") {
                                 messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.data.host.url}/1x.webp" id="emote" title="${emote.name}">`);
@@ -605,33 +602,24 @@ async function chatV2() {
                 newMessage.insertAdjacentElement("afterbegin", streamBadge);
                 
 
-                //Add chat badges
+                ///Add chat badges
                 const badgesJSON = extra.userBadges;
                 for(var key in extra.userBadges) {
-                    if (key == "subscriber") {
-                        if(badgesJSON[key] > 12) {
-                            var badge = document.createElement("img");
-                            badge.src = `${key}/12.png`
-                            badge.id = "badge";
-                            badge.title = `${key} ${badgesJSON[key]}`;
-                            badge.classList.add("inline");
-                            newMessage.append(badge);
-                        } else {
-                            var badge = document.createElement("img");
-                            badge.src = `${key}/${badgesJSON[key]}.png`
-                            badge.id = "badge";
-                            badge.title = `${key} ${badgesJSON[key]}`;
-                            badge.classList.add("inline");
-                            newMessage.append(badge);
+                    for(var index in infoForStreamer.badges) {
+                        var badge = infoForStreamer.badges[index];
+                        if(badge.set_id == key) {
+                            var versions = badge.versions;
+                            for(var index2 in versions) {
+                                if(versions[index2].id == badgesJSON[key]) {
+                                    var badge = document.createElement("img");
+                                    badge.src = versions[index2].image_url;
+                                    badge.id = "badge";
+                                    badge.title = `${key} ${badgesJSON[key]}`;
+                                    badge.classList.add("inline");
+                                    newMessage.append(badge);
+                                }
+                            }
                         }
-
-                    } else {
-                        var badge = document.createElement("img");
-                        badge.src = `${key}/${badgesJSON[key]}.png`
-                        badge.id = "badge";
-                        badge.title = `${key} ${badgesJSON[key]}`;
-                        badge.classList.add("inline");
-                        newMessage.append(badge);
                     }
                 }
 
@@ -664,8 +652,8 @@ async function chatV2() {
                 if(ffzEnabled || seventvEnabled || bttvEnabled) {
                     var messageWords = [];
                     messageWords = messageText.innerHTML.split(" ");
-                    for (var code in streamerInfo[extra.channel].emotes) {
-                        var emote = streamerInfo[extra.channel].emotes[code];
+                    for (var code in infoForStreamer.emotes) {
+                        var emote = infoForStreamer.emotes[code];
                         if(messageWords.includes(emote.name)) {
                             if(emote.type == "7tv") {
                                 messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.data.host.url}/1x.webp" id="emote" title="${emote.name}">`);
@@ -868,4 +856,48 @@ function checkIfInEmoteList(streamerInfo, channel, emote) {
         }
     }
     return false;
+}
+
+function addBadges(badges, global, streamerInfo, channel) {
+    var data = badges.data;
+    var datag = global.data;
+    for (var index in data) {
+        var bSet = data[index];
+        var badgeSet = {
+            "set_id": `${bSet.set_id}`,
+            "versions": []
+        }
+        for(var index2 in bSet.versions) {
+            var badge = {
+                "id": `${bSet.versions[index2].id}`,
+                "image_url": `${bSet.versions[index2].image_url_1x}`
+            }
+            badgeSet.versions.push(badge);
+        }
+        streamerInfo[channel].badges.push(badgeSet);
+    }
+    for (var index in datag) {
+        var bSet = datag[index];
+        var badgeSet = {
+            "set_id": `${bSet.set_id}`,
+            "versions": []
+        }
+        var notInBadges = true;
+        for(var index3 in streamerInfo[channel].badges) {
+            if(streamerInfo[channel].badges[index3].set_id == badgeSet.set_id) {
+                notInBadges = false;
+                break;
+            }
+        }
+        if(notInBadges) {
+            for(var index2 in bSet.versions) {
+                var badge = {
+                    "id": `${bSet.versions[index2].id}`,
+                    "image_url": `${bSet.versions[index2].image_url_1x}`
+                }
+                badgeSet.versions.push(badge);
+            }
+            streamerInfo[channel].badges.push(badgeSet);
+        }
+    }
 }
