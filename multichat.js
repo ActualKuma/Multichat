@@ -408,8 +408,6 @@ async function chatV2() {
         let bttvEnabled = document.getElementById("bttv").checked;
         let seventvEnabled = document.getElementById("7tv").checked;
 
-        console.log(`ffz:${ffzEnabled} bttv:${bttvEnabled} 7tv:${seventvEnabled} `);
-
         if(seventvEnabled) {
             load7TV(streamerInfo);
         }
@@ -421,7 +419,6 @@ async function chatV2() {
         if(bttvEnabled) {
             loadBTTV(streamerInfo);
         }
-        console.log(streamerInfo);
 
         if(streams == null) {
             streams = `${channels[i]}`;
@@ -460,7 +457,6 @@ async function chatV2() {
 
                 //Stream Identifier
                 var infoForStreamer = streamerInfo[extra.channel];
-                console.log(infoForStreamer);
                 const url = `${infoForStreamer["profile_image_url"]}`;
                 var streamBadge = document.createElement("img");
                 streamBadge.src = url;
@@ -540,9 +536,19 @@ async function chatV2() {
                 //add 3rd party emotes
                 if(ffzEnabled || seventvEnabled || bttvEnabled) {
                     var messageWords = [];
-                    messageWords = message.split(" ");
-                    for (var code in streamerInfo[]) {
-                        
+                    messageWords = messageText.innerHTML.split(" ");
+                    for (var code in streamerInfo[extra.channel].emotes) {
+                        var emote = streamerInfo[extra.channel].emotes[code];
+                        if(messageWords.includes(emote.name)) {
+                            if(emote.type == "7tv") {
+                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.data.host.url}/1x.webp" id="emote" title="${emote.name}">`);
+                            } else if (emote.type == "ffz") {
+                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.urls[1]}" id="emote" title="${emote.name}">`);
+                            } else if (emote.type == "bttv") {
+                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="https://cdn.betterttv.net/emote/${emote.id}/1x.webp" id="emote" title="${emote.name}">`);
+                            }
+                            
+                        }  
                     }
                 }
 
@@ -590,7 +596,6 @@ async function chatV2() {
 
                 //Stream Identifier
                 var infoForStreamer = streamerInfo[extra.channel];
-                console.log(infoForStreamer);
                 const url = `${infoForStreamer["profile_image_url"]}`;
                 var streamBadge = document.createElement("img");
                 streamBadge.src = url;
@@ -658,9 +663,19 @@ async function chatV2() {
                 //add 3rd party emotes
                 if(ffzEnabled || seventvEnabled || bttvEnabled) {
                     var messageWords = [];
-                    messageWords = message.split(" ");
-                    for (var code in streamerInfo[]) {
-                        
+                    messageWords = messageText.innerHTML.split(" ");
+                    for (var code in streamerInfo[extra.channel].emotes) {
+                        var emote = streamerInfo[extra.channel].emotes[code];
+                        if(messageWords.includes(emote.name)) {
+                            if(emote.type == "7tv") {
+                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.data.host.url}/1x.webp" id="emote" title="${emote.name}">`);
+                            } else if (emote.type == "ffz") {
+                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.urls[1]}" id="emote" title="${emote.name}">`);
+                            } else if (emote.type == "bttv") {
+                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="https://cdn.betterttv.net/emote/${emote.id}/1x.webp" id="emote" title="${emote.name}">`);
+                            }
+                            
+                        }  
                     }
                 }
                 
@@ -709,7 +724,9 @@ function loadFFZ(streamerInfo) {
                     e.emoticons.forEach(ele => {
                         ele.code = ele.name;
                         ele.type = "ffz";
-                        streamerInfo[channel].emotes.push(ele);
+                        if(!checkIfInEmoteList(streamerInfo, channel, ele)) {
+                            streamerInfo[channel].emotes.push(ele);
+                        }
                     })
                 })
 
@@ -727,7 +744,7 @@ function loadFFZ(streamerInfo) {
                     e.emoticons.forEach(ele => {
                         ele.code = ele.name;
                         ele.type = "ffz";
-                        if(!checkIfInEmoteList(streamerInfo, channel, emote_set[emote])) {
+                        if(!checkIfInEmoteList(streamerInfo, channel, ele)) {
                             streamerInfo[channel].emotes.push(ele);
                         }
                     })
@@ -751,14 +768,14 @@ function loadBTTV(streamerInfo) {
             try {
                 body.channelEmotes.forEach(ele => {
                     ele.type = "bttv";
-                    if(!checkIfInEmoteList(streamerInfo, channel, emote_set[emote])) {
+                    if(!checkIfInEmoteList(streamerInfo, channel, ele)) {
                         streamerInfo[channel].emotes.push(ele);
                     }
                 })
 
                 body.sharedEmotes.forEach(ele => {
                     ele.type = "bttv";
-                    if(!checkIfInEmoteList(streamerInfo, channel, emote_set[emote])) {
+                    if(!checkIfInEmoteList(streamerInfo, channel, ele)) {
                         streamerInfo[channel].emotes.push(ele);
                     }
                 })
@@ -777,7 +794,7 @@ function loadBTTV(streamerInfo) {
             try {
                 body.forEach(ele => {
                     ele.type = "bttv";
-                    if(!checkIfInEmoteList(streamerInfo, channel, emote_set[emote])) {
+                    if(!checkIfInEmoteList(streamerInfo, channel, ele)) {
                         streamerInfo[channel].emotes.push(ele);
                     }
                 })
