@@ -16,9 +16,12 @@ const clientId = "lkcbakp0dx86jr3kvf0nazy13ubbdd";
 var ignoredUsers = [];
 var chatbox = document.getElementById("scrollable");
 var initialHeight = chatbox.offsetHeight;
+var streamerInfo = {};
+
 chatbox.addEventListener("resize", (event) => {
     initialHeight = chatbox.offsetHeight;
 })
+
 if(openStreams != null) {
     let input = document.getElementById("streams");
     input.value = openStreams;
@@ -50,6 +53,21 @@ function submitForm(event) {
     return false;
 }
 
+function sendTwitchMessage() {
+    let messageText = document.getElementById("textInput").value;
+    var target = ["broadcast"];
+    let broadcaster = document.getElementById("streamsDropdown").value;
+    let broadcaster_id = streamerInfo[broadcaster]["id"];
+
+    var body = {
+        "message": messageText,
+        "broadcaster_id": broadcaster_id,
+        "target": target
+    }
+
+    ComfyTwitch.SendMessage(clientId, body);
+}
+
 function twitchLogin() {
     var url = "";
     if(window.location.hostname == "localhost"){ 
@@ -57,7 +75,7 @@ function twitchLogin() {
     } else {
         url = "https://multichat.dev";
     }
-    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `${url}`, [ "user:read:email" ] );
+    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `${url}`, ["channel:read:redemptions", "user:read:email", "user:write:chat", "channel:moderate"] );
 }
 
 function twitchLogout() {
@@ -399,7 +417,18 @@ async function chatV2() {
 
     var chat = document.querySelector("#chat>ul");
 
-    var streamerInfo = {};
+    let currUser = await ComfyTwitch.GetCurrentUser(clientId);
+
+    let ffzEnabled = document.getElementById("ffz").checked;
+    let bttvEnabled = document.getElementById("bttv").checked;
+    let seventvEnabled = document.getElementById("7tv").checked;
+    let chatEnabled = document.getElementById("enableChat").checked;
+
+    if(chatEnabled) {
+        chatbox.style.height = "88%";
+        document.getElementById("textChat").style.display = "block";
+        initialHeight = chatbox.offsetHeight;
+    }
 
     for(var i = 0; i < channels.length ; i++) {
         var channelName = channels[i].toLowerCase();
@@ -415,10 +444,6 @@ async function chatV2() {
         let globalBadges = await ComfyTwitch.GetBadgesGlobal(clientId);
 
         addBadges(badges, globalBadges, streamerInfo, channelName);
-
-        let ffzEnabled = document.getElementById("ffz").checked;
-        let bttvEnabled = document.getElementById("bttv").checked;
-        let seventvEnabled = document.getElementById("7tv").checked;
 
         if(seventvEnabled) {
             load7TV(streamerInfo);
@@ -439,284 +464,290 @@ async function chatV2() {
         } else {
             streams = `${streams}, ${channels[i]}`;
         }
+
+        var streamsDropdown = document.getElementById("streamsDropdown");
+        streamsDropdown.innerHTML = `${streamsDropdown.innerHTML}<option value=${channels[i]}>${channels[i]}</option>`
+    }
         
-        ComfyJS.onChat = (user, message, flags, self, extra) => {
-            if(!ignoredUsers.includes(user.toLowerCase())) {
-                //Message Container
-                var newMessage = document.createElement("li");
-                newMessage.style.listStyleType = "none";
+    ComfyJS.onChat = (user, message, flags, self, extra) => {
+        if(!ignoredUsers.includes(user.toLowerCase())) {
+            //Message Container
+            var newMessage = document.createElement("li");
+            newMessage.style.listStyleType = "none";
 
-                newMessage.id = `${extra.id}`;
+            newMessage.id = `${extra.id}`;
 
-                //Username
-                var username = document.createElement("div")
-                if(user.toLowerCase() != extra.username.toLowerCase()) {
-                    username.innerText = `${user}(${extra.username})`;
-                } else {
-                    username.innerText = `${user}`;
+            //Username
+            var username = document.createElement("div")
+            if(user.toLowerCase() != extra.username.toLowerCase()) {
+                username.innerText = `${user}(${extra.username})`;
+            } else {
+                username.innerText = `${user}`;
+            }
+            
+
+            if(extra.userColor == null) {
+                username.style.color = "#6441a5";
+            } else {
+                var colour = tinycolor(`${extra.userColor}`);
+                if(colour.getBrightness() < 50) {
+                    colour.lighten();
+                    username.style.textShadow = "1px 1px 1px #ffffff"
                 }
-                
+                username.style.color = colour.toString();
+            }
+            username.classList.add("inline");
 
-                if(extra.userColor == null) {
-                    username.style.color = "#6441a5";
-                } else {
-                    var colour = tinycolor(`${extra.userColor}`);
-                    if(colour.getBrightness() < 50) {
-                        colour.lighten();
-                        username.style.textShadow = "1px 1px 1px #ffffff"
-                    }
-                    username.style.color = colour.toString();
-                }
-                username.classList.add("inline");
+            //Stream Identifier
+            var infoForStreamer = streamerInfo[extra.channel];
+            const url = `${infoForStreamer["profile_image_url"]}`;
+            var streamBadge = document.createElement("img");
+            streamBadge.src = url;
+            streamBadge.id = "streambadge";
+            streamBadge.title = `${extra.channel}`;
+            streamBadge.classList.add("inline");
+            newMessage.insertAdjacentElement("afterbegin", streamBadge);
+            
+            
 
-                //Stream Identifier
-                var infoForStreamer = streamerInfo[extra.channel];
-                const url = `${infoForStreamer["profile_image_url"]}`;
-                var streamBadge = document.createElement("img");
-                streamBadge.src = url;
-                streamBadge.id = "streambadge";
-                streamBadge.title = `${extra.channel}`;
-                streamBadge.classList.add("inline");
-                newMessage.insertAdjacentElement("afterbegin", streamBadge);
-                
-                
-
-                //Add chat badges
-                const badgesJSON = extra.userBadges;
-                for(var key in extra.userBadges) {
-                    for(var index in infoForStreamer.badges) {
-                        var badge = infoForStreamer.badges[index];
-                        if(badge.set_id == key) {
-                            var versions = badge.versions;
-                            for(var index2 in versions) {
-                                if(versions[index2].id == badgesJSON[key]) {
-                                    var badge = document.createElement("img");
-                                    badge.src = versions[index2].image_url;
-                                    badge.id = "badge";
-                                    badge.title = `${key} ${badgesJSON[key]}`;
-                                    badge.classList.add("inline");
-                                    newMessage.append(badge);
-                                }
+            //Add chat badges
+            const badgesJSON = extra.userBadges;
+            for(var key in extra.userBadges) {
+                for(var index in infoForStreamer.badges) {
+                    var badge = infoForStreamer.badges[index];
+                    if(badge.set_id == key) {
+                        var versions = badge.versions;
+                        for(var index2 in versions) {
+                            if(versions[index2].id == badgesJSON[key]) {
+                                var badge = document.createElement("img");
+                                badge.src = versions[index2].image_url;
+                                badge.id = "badge";
+                                badge.title = `${key} ${badgesJSON[key]}`;
+                                badge.classList.add("inline");
+                                newMessage.append(badge);
                             }
                         }
                     }
-                }
-
-                //Message Seperator
-                var userMessageSeperator = document.createElement("div");
-                userMessageSeperator.innerText = ":" + String.fromCharCode(160);
-                userMessageSeperator.classList.add("inline");
-
-                //Message
-                var messageText = document.createElement("div");
-                messageText.innerText = `${message}`;
-                messageText.classList.add("inline");
-
-                //Add emotes to messages
-                const messageEmotes = extra.messageEmotes;
-                for(var key in extra.messageEmotes) {
-                    emoteLocationArray = messageEmotes[key];
-
-
-                    locations= emoteLocationArray[0].split('-');
-                    
-                    var x = Number(locations[0]);
-                    var y = Number(locations[1]) + 1;
-                    var replace = message.slice(x, y);
-
-                    messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="emote" title="${replace}">`);
-                }
-
-                //turn links into hyperlinks
-                if(message.includes("http://") || message.includes("https://")) {
-                    var messageWords = [];
-                    messageWords = message.split(" ");
-                    for(var w = 0; w < messageWords.length; w++) {
-                        if(messageWords[w].includes("http://") || messageWords[w].includes("https://")) {
-                            messageText.innerHTML = messageText.innerHTML.replaceAll(messageWords[w], `<a href="${messageWords[w]}">${messageWords[w]}</a>`);
-                        }
-                    }
-                }
-
-                //add 3rd party emotes
-                if(ffzEnabled || seventvEnabled || bttvEnabled) {
-                    var messageWords = [];
-                    messageWords = messageText.innerHTML.split(" ");
-                    for (var code in infoForStreamer.emotes) {
-                        var emote = infoForStreamer.emotes[code];
-                        if(messageWords.includes(emote.name)) {
-                            if(emote.type == "7tv") {
-                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.data.host.url}/1x.webp" id="emote" title="${emote.name}">`);
-                            } else if (emote.type == "ffz") {
-                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.urls[1]}" id="emote" title="${emote.name}">`);
-                            } else if (emote.type == "bttv") {
-                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="https://cdn.betterttv.net/emote/${emote.id}/1x.webp" id="emote" title="${emote.name}">`);
-                            }
-                            
-                        }  
-                    }
-                }
-
-                //Add message text
-                newMessage.append(username);
-                newMessage.append(userMessageSeperator);
-                newMessage.append(messageText);
-
-
-                var chatbox = document.getElementById("scrollable");
-                var prevHeight = chatbox.scrollHeight;
-
-                chat.append(newMessage);
-
-
-                //Scroll chat to bottom=
-                if(initialHeight == (prevHeight - chatbox.scrollTop)) {
-                    chatbox.scrollTop = chatbox.scrollHeight;
                 }
             }
-        }
 
-        ComfyJS.onCommand = (user, message, flags, self, extra) => {
-            if(!ignoredUsers.includes(user.toLowerCase())) {
-                //Message Container
-                var newMessage = document.createElement("li");
-                newMessage.style.listStyleType = "none";
+            //Message Seperator
+            var userMessageSeperator = document.createElement("div");
+            userMessageSeperator.innerText = ":" + String.fromCharCode(160);
+            userMessageSeperator.classList.add("inline");
 
-                newMessage.id = `${extra.id}`;
+            //Message
+            var messageText = document.createElement("div");
+            messageText.innerText = `${message}`;
+            messageText.classList.add("inline");
 
-                //Username
-                var username = document.createElement("div")
-                if(user.toLowerCase() != extra.username.toLowerCase()) {
-                    username.innerText = `${user}(${extra.username})`;
-                } else {
-                    username.innerText = `${user}`;
-                }
+            //Add emotes to messages
+            const messageEmotes = extra.messageEmotes;
+            for(var key in extra.messageEmotes) {
+                emoteLocationArray = messageEmotes[key];
+
+
+                locations= emoteLocationArray[0].split('-');
                 
+                var x = Number(locations[0]);
+                var y = Number(locations[1]) + 1;
+                var replace = message.slice(x, y);
 
-                if(extra.userColor == null) {
-                    username.style.color = "#6441a5";
-                } else {
-                    var colour = tinycolor(`${extra.userColor}`);
-                    if(colour.getBrightness() < 50) {
-                        colour.lighten();
-                        username.style.textShadow = "1px 1px 1px #ffffff"
+                messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="emote" title="${replace}">`);
+            }
+
+            //turn links into hyperlinks
+            if(message.includes("http://") || message.includes("https://")) {
+                var messageWords = [];
+                messageWords = message.split(" ");
+                for(var w = 0; w < messageWords.length; w++) {
+                    if(messageWords[w].includes("http://") || messageWords[w].includes("https://")) {
+                        messageText.innerHTML = messageText.innerHTML.replaceAll(messageWords[w], `<a href="${messageWords[w]}">${messageWords[w]}</a>`);
                     }
-                    username.style.color = colour.toString();
                 }
-                username.classList.add("inline");
+            }
 
-                //Stream Identifier
-                var infoForStreamer = streamerInfo[extra.channel];
-                const url = `${infoForStreamer["profile_image_url"]}`;
-                var streamBadge = document.createElement("img");
-                streamBadge.src = url;
-                streamBadge.id = "streambadge";
-                streamBadge.title = `${extra.channel}`;
-                streamBadge.classList.add("inline");
-                newMessage.insertAdjacentElement("afterbegin", streamBadge);
-                
-
-                ///Add chat badges
-                const badgesJSON = extra.userBadges;
-                for(var key in extra.userBadges) {
-                    for(var index in infoForStreamer.badges) {
-                        var badge = infoForStreamer.badges[index];
-                        if(badge.set_id == key) {
-                            var versions = badge.versions;
-                            for(var index2 in versions) {
-                                if(versions[index2].id == badgesJSON[key]) {
-                                    var badge = document.createElement("img");
-                                    badge.src = versions[index2].image_url;
-                                    badge.id = "badge";
-                                    badge.title = `${key} ${badgesJSON[key]}`;
-                                    badge.classList.add("inline");
-                                    newMessage.append(badge);
-                                }
-                            }
+            //add 3rd party emotes
+            if(ffzEnabled || seventvEnabled || bttvEnabled) {
+                var messageWords = [];
+                messageWords = messageText.innerHTML.split(" ");
+                for (var code in infoForStreamer.emotes) {
+                    var emote = infoForStreamer.emotes[code];
+                    if(messageWords.includes(emote.name)) {
+                        if(emote.type == "7tv") {
+                            messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.data.host.url}/1x.webp" id="emote" title="${emote.name}">`);
+                        } else if (emote.type == "ffz") {
+                            messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.urls[1]}" id="emote" title="${emote.name}">`);
+                        } else if (emote.type == "bttv") {
+                            messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="https://cdn.betterttv.net/emote/${emote.id}/1x.webp" id="emote" title="${emote.name}">`);
                         }
-                    }
+                        
+                    }  
                 }
+            }
 
-                //Message Seperator
-                var userMessageSeperator = document.createElement("div");
-                userMessageSeperator.innerText = ":" + String.fromCharCode(160);
-                userMessageSeperator.classList.add("inline");
-
-                //Message
-                var messageText = document.createElement("div");
-                messageText.innerText = `!${message}`;
-                messageText.classList.add("inline");
-
-                //Add emotes to messages
-                const messageEmotes = extra.messageEmotes;
-                for(var key in extra.messageEmotes) {
-                    emoteLocationArray = messageEmotes[key];
+            //Add message text
+            newMessage.append(username);
+            newMessage.append(userMessageSeperator);
+            newMessage.append(messageText);
 
 
-                    locations= emoteLocationArray[0].split('-');
-                    
-                    var x = Number(locations[0]);
-                    var y = Number(locations[1]) + 1;
-                    var replace = message.slice(x, y);
+            var chatbox = document.getElementById("scrollable");
+            var prevHeight = chatbox.scrollHeight;
 
-                    messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="emote" title="${replace}">`);
-                }
-
-                //add 3rd party emotes
-                if(ffzEnabled || seventvEnabled || bttvEnabled) {
-                    var messageWords = [];
-                    messageWords = messageText.innerHTML.split(" ");
-                    for (var code in infoForStreamer.emotes) {
-                        var emote = infoForStreamer.emotes[code];
-                        if(messageWords.includes(emote.name)) {
-                            if(emote.type == "7tv") {
-                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.data.host.url}/1x.webp" id="emote" title="${emote.name}">`);
-                            } else if (emote.type == "ffz") {
-                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.urls[1]}" id="emote" title="${emote.name}">`);
-                            } else if (emote.type == "bttv") {
-                                messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="https://cdn.betterttv.net/emote/${emote.id}/1x.webp" id="emote" title="${emote.name}">`);
-                            }
-                            
-                        }  
-                    }
-                }
-                
-                //turn links into hyperlinks
-                if(message.includes("http://") || message.includes("https://")) {
-                    var messageWords = [];
-                    messageWords = message.split(" ");
-                    for(var w = 0; w < messageWords.length; w++) {
-                        if(messageWords[w].includes("http://") || messageWords[w].includes("https://")) {
-                            messageText.innerHTML = messageText.innerHTML.replaceAll(messageWords[w], `<a href="${messageWords[w]}">${messageWords[w]}</a>`);
-                        }
-                    }
-                }
-
-                //Add message text
-                newMessage.append(username);
-                newMessage.append(userMessageSeperator);
-                newMessage.append(messageText);
-
-                var chatbox = document.getElementById("scrollable");
-                var prevHeight = chatbox.scrollHeight;
-
-                chat.append(newMessage);
+            chat.append(newMessage);
 
 
-                //Scroll chat to bottom=
-                if(initialHeight == (prevHeight - chatbox.scrollTop)) {
-                    chatbox.scrollTop = chatbox.scrollHeight;
-                }
+            //Scroll chat to bottom=
+            if(initialHeight == (prevHeight - chatbox.scrollTop)) {
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
         }
-        }
-
-        ComfyJS.onMessageDeleted = (id, extra) => {
-            var todelete = document.getElementById(`${id}`);
-            todelete.style.display = "none";
-        }
-
-        ComfyJS.Init(channels[i]);
     }
+
+    ComfyJS.onCommand = (user, message, flags, self, extra) => {
+        if(!ignoredUsers.includes(user.toLowerCase())) {
+            //Message Container
+            var newMessage = document.createElement("li");
+            newMessage.style.listStyleType = "none";
+
+            newMessage.id = `${extra.id}`;
+
+            //Username
+            var username = document.createElement("div")
+            if(user.toLowerCase() != extra.username.toLowerCase()) {
+                username.innerText = `${user}(${extra.username})`;
+            } else {
+                username.innerText = `${user}`;
+            }
+            
+
+            if(extra.userColor == null) {
+                username.style.color = "#6441a5";
+            } else {
+                var colour = tinycolor(`${extra.userColor}`);
+                if(colour.getBrightness() < 50) {
+                    colour.lighten();
+                    username.style.textShadow = "1px 1px 1px #ffffff"
+                }
+                username.style.color = colour.toString();
+            }
+            username.classList.add("inline");
+
+            //Stream Identifier
+            var infoForStreamer = streamerInfo[extra.channel];
+            const url = `${infoForStreamer["profile_image_url"]}`;
+            var streamBadge = document.createElement("img");
+            streamBadge.src = url;
+            streamBadge.id = "streambadge";
+            streamBadge.title = `${extra.channel}`;
+            streamBadge.classList.add("inline");
+            newMessage.insertAdjacentElement("afterbegin", streamBadge);
+            
+
+            ///Add chat badges
+            const badgesJSON = extra.userBadges;
+            for(var key in extra.userBadges) {
+                for(var index in infoForStreamer.badges) {
+                    var badge = infoForStreamer.badges[index];
+                    if(badge.set_id == key) {
+                        var versions = badge.versions;
+                        for(var index2 in versions) {
+                            if(versions[index2].id == badgesJSON[key]) {
+                                var badge = document.createElement("img");
+                                badge.src = versions[index2].image_url;
+                                badge.id = "badge";
+                                badge.title = `${key} ${badgesJSON[key]}`;
+                                badge.classList.add("inline");
+                                newMessage.append(badge);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Message Seperator
+            var userMessageSeperator = document.createElement("div");
+            userMessageSeperator.innerText = ":" + String.fromCharCode(160);
+            userMessageSeperator.classList.add("inline");
+
+            //Message
+            var messageText = document.createElement("div");
+            messageText.innerText = `!${message}`;
+            messageText.classList.add("inline");
+
+            //Add emotes to messages
+            const messageEmotes = extra.messageEmotes;
+            for(var key in extra.messageEmotes) {
+                emoteLocationArray = messageEmotes[key];
+
+
+                locations= emoteLocationArray[0].split('-');
+                
+                var x = Number(locations[0]);
+                var y = Number(locations[1]) + 1;
+                var replace = message.slice(x, y);
+
+                messageText.innerHTML = messageText.innerHTML.replaceAll(replace, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${key}/default/dark/1.0" id="emote" title="${replace}">`);
+            }
+
+            //add 3rd party emotes
+            if(ffzEnabled || seventvEnabled || bttvEnabled) {
+                var messageWords = [];
+                messageWords = messageText.innerHTML.split(" ");
+                for (var code in infoForStreamer.emotes) {
+                    var emote = infoForStreamer.emotes[code];
+                    if(messageWords.includes(emote.name)) {
+                        if(emote.type == "7tv") {
+                            messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.data.host.url}/1x.webp" id="emote" title="${emote.name}">`);
+                        } else if (emote.type == "ffz") {
+                            messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="${emote.urls[1]}" id="emote" title="${emote.name}">`);
+                        } else if (emote.type == "bttv") {
+                            messageText.innerHTML = messageText.innerHTML.replaceAll(emote.name, `<img src="https://cdn.betterttv.net/emote/${emote.id}/1x.webp" id="emote" title="${emote.name}">`);
+                        }
+                        
+                    }  
+                }
+            }
+            
+            //turn links into hyperlinks
+            if(message.includes("http://") || message.includes("https://")) {
+                var messageWords = [];
+                messageWords = message.split(" ");
+                for(var w = 0; w < messageWords.length; w++) {
+                    if(messageWords[w].includes("http://") || messageWords[w].includes("https://")) {
+                        messageText.innerHTML = messageText.innerHTML.replaceAll(messageWords[w], `<a href="${messageWords[w]}">${messageWords[w]}</a>`);
+                    }
+                }
+            }
+
+            //Add message text
+            newMessage.append(username);
+            newMessage.append(userMessageSeperator);
+            newMessage.append(messageText);
+
+            var chatbox = document.getElementById("scrollable");
+            var prevHeight = chatbox.scrollHeight;
+
+            chat.append(newMessage);
+
+
+            //Scroll chat to bottom=
+            if(initialHeight == (prevHeight - chatbox.scrollTop)) {
+                chatbox.scrollTop = chatbox.scrollHeight;
+            }
+        }
+    }
+
+    ComfyJS.onMessageDeleted = (id, extra) => {
+        var todelete = document.getElementById(`${id}`);
+        todelete.style.display = "none";
+    }
+
+
+
+    ComfyJS.Init(currUser["login"], null, channels);
+    
 
     document.title = `multichat.dev (${streams})`
 }

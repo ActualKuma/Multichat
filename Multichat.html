@@ -40,6 +40,16 @@
             <ul id="scrollable">
             </ul>
         </div>
+        <div id="textChat" class="onlogged">
+            <form id="tchat" onSubmit="sendTwitchMessage(); return false">
+                <table id="chatTable">
+                    <td><select id="streamsDropdown" class="inline"></select></td>
+                    <td><input class="inline" id="sendMessage" type="button" onclick="sendTwitchMessage()" value="Send"></td>
+                    <br>
+                    <td><input class="inline" type="text" id="textInput"></td>
+                </table>
+            </form>
+        </div>
         <div id="credits">
             Created by <a class="kuma" href="https://github.com/ActualKuma/Multichat">ActualKuma</a><br>
             <input class="inline" id="logout" type="button" onclick="twitchLogout()" value="Twitch Logout">
