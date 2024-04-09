@@ -14,7 +14,11 @@ const ignoreUsers = urlParams.get("ignoreUsers");
 const oauthToken = new URLSearchParams(location.hash.replace("#", "")).get("access_token");
 const clientId = "lkcbakp0dx86jr3kvf0nazy13ubbdd";
 var ignoredUsers = [];
-
+var chatbox = document.getElementById("scrollable");
+var initialHeight = chatbox.offsetHeight;
+chatbox.addEventListener("resize", (event) => {
+    initialHeight = chatbox.offsetHeight;
+})
 if(openStreams != null) {
     let input = document.getElementById("streams");
     input.value = openStreams;
@@ -47,7 +51,13 @@ function submitForm(event) {
 }
 
 function twitchLogin() {
-    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `https://multichat.dev`, [ "user:read:email" ] );
+    var url = "";
+    if(window.location.hostname == "localhost"){ 
+        url = "http://localhost:8080";
+    } else {
+        url = "https://multichat.dev";
+    }
+    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `${url}`, [ "user:read:email" ] );
 }
 
 function twitchLogout() {
@@ -552,11 +562,17 @@ async function chatV2() {
                 newMessage.append(userMessageSeperator);
                 newMessage.append(messageText);
 
+
+                var chatbox = document.getElementById("scrollable");
+                var prevHeight = chatbox.scrollHeight;
+
                 chat.append(newMessage);
 
-                //Scroll chat to bottom
-                var chatbox = document.getElementById("scrollable")
-                chatbox.scrollTop = chatbox.scrollHeight;
+
+                //Scroll chat to bottom=
+                if(initialHeight == (prevHeight - chatbox.scrollTop)) {
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                }
             }
         }
 
@@ -681,12 +697,17 @@ async function chatV2() {
                 newMessage.append(userMessageSeperator);
                 newMessage.append(messageText);
 
+                var chatbox = document.getElementById("scrollable");
+                var prevHeight = chatbox.scrollHeight;
+
                 chat.append(newMessage);
 
-                //Scroll chat to bottom
-                var chatbox = document.getElementById("scrollable")
-                chatbox.scrollTop = chatbox.scrollHeight;
-            }
+
+                //Scroll chat to bottom=
+                if(initialHeight == (prevHeight - chatbox.scrollTop)) {
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                }
+        }
         }
 
         ComfyJS.onMessageDeleted = (id, extra) => {
