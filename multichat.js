@@ -49,37 +49,37 @@ function getRandomInt(max) {
 function getRandomIcon() {
     switch(getRandomInt(16)) {
         case 0:
-            return "icons/multichat1.png";
+            return "/Icons/multichat1.png";
         case 1:
-            return "icons/multichat2.png";
+            return "/Icons/multichat2.png";
         case 2:
-            return "icons/multichat3.png";
+            return "/Icons/multichat3.png";
         case 3:
-            return "icons/multichat4.png";
+            return "/Icons/multichat4.png";
         case 4:
-            return "icons/multichat5.png";
+            return "/Icons/multichat5.png";
         case 5:
-            return "icons/multichat6.png";
+            return "/Icons/multichat6.png";
         case 6:
-            return "icons/multichat7.png";
+            return "/Icons/multichat7.png";
         case 7:
-            return "icons/multichat8.png";
+            return "/Icons/multichat8.png";
         case 8:
-            return "icons/multichat9.png";
+            return "/Icons/multichat9.png";
         case 9:
-            return "icons/multichat10.png";
+            return "/Icons/multichat10.png";
         case 10:
-            return "icons/multichat11.png";
+            return "/Icons/multichat11.png";
         case 11:
-            return "icons/multichat12.png";
+            return "/Icons/multichat12.png";
         case 12:
-            return "icons/multichat13.png";
+            return "/Icons/multichat13.png";
         case 13:
-            return "icons/multichat14.png";
+            return "/Icons/multichat14.png";
         case 14:
-            return "icons/multichat15.png";
+            return "/Icons/multichat15.png";
         case 15:
-            return "icons/multichat16.png";
+            return "/Icons/multichat16.png";
     }
 }
 
