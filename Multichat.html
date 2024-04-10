@@ -31,10 +31,20 @@
                     <div class="inline onlogged">FFZ:</div><input class="inline onlogged" type="checkbox" id="ffz" name="ffz">
                     <div class="inline onlogged">BTTV:</div><input class="inline onlogged" type="checkbox" id="bttv" name="bttv">
                     <div class="inline onlogged">7TV:</div><input class="inline onlogged" type="checkbox" id="7tv" name="7tv">
+                    <div class="inline onlogged">Enable Chat:</div><input class="inline onlogged" type="checkbox" id="enableChat" name="enableChat">
                 </td>
             </table>
         </form>
-          
+        <div id="textChat" class="onlogged">
+            <form id="tchat" onSubmit="sendTwitchMessage(); return false">
+                <table id="chatTable">
+                    <td><select id="streamsDropdown" class="inline"></select></td>
+                    <td><input class="inline" id="sendMessage" type="button" onclick="sendTwitchMessage()" value="Send"></td>
+                    <br>
+                    <td><textarea class="inline" type="text" id="textInput" maxlength="500"></textarea></td>
+                </table>
+            </form>
+        </div>
         <div id="chat">
             <ul id="scrollable">
             </ul>

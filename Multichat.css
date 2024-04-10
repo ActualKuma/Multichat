@@ -59,7 +59,7 @@ div {
 }
 
 #scrollable {
-    height: 94%;
+    height: 100%;
     position: absolute;
     top: 0;
     bottom: 0;
@@ -68,6 +68,42 @@ div {
     z-index: 0;
     overflow-y: scroll; /* Hide vertical scrollbar */
     overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
+#textChat {
+    display: none;
+    position: absolute;
+    top: 90%;
+    height: 10%;
+    left: 0;
+    z-index: 10;
+}
+
+#chatTable {
+    height: 100%;
+}
+
+#streamsDropdown {
+    position: absolute;
+    top: 0;
+    left: 5px;
+    width: 100px;
+    height: 20px;
+}
+
+#textInput {
+    position: absolute;
+    top: 20px;
+    left: 5px;
+    width: 400px;
+    height: 70%;
+}
+
+#sendMessage {
+    position: absolute;
+    top: 25%;
+    left: 405px;
+    width: 60px;
 }
 
 .displayinline {
