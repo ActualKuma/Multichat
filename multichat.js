@@ -49,6 +49,7 @@ function getRandomInt(max) {
 function getRandomIcon() {
     switch(getRandomInt(16)) {
         case 0:
+
             return "/Icons/multichat1.png";
         case 1:
             return "/Icons/multichat2.png";
@@ -517,6 +518,7 @@ async function chatV2() {
 
             newMessage.id = `${extra.id}`;
 
+
              //Username
              var username = document.createElement("button")
              if(user.toLowerCase() != extra.username.toLowerCase()) {
@@ -526,6 +528,7 @@ async function chatV2() {
              }
              username.value = `${user} ${extra.channel}`;
              username.classList.add("btn");
+
 
             if(extra.userColor == null) {
                 username.style.color = "#6441a5";
@@ -652,17 +655,21 @@ async function chatV2() {
             var newMessage = document.createElement("li");
             newMessage.style.listStyleType = "none";
 
+
             newMessage.id = `${extra.id}`;
 
             //Username
             var username = document.createElement("button")
+
             if(user.toLowerCase() != extra.username.toLowerCase()) {
                 username.innerText = `${user}(${extra.username})`;
             } else {
                 username.innerText = `${user}`;
             }
+
             username.value = `${user} ${extra.channel}`;
             username.classList.add("btn");
+
 
             
 
