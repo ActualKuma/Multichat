@@ -27,7 +27,8 @@ if (!link) {
 }
 var icon_url = getRandomIcon();
 link.href = icon_url;
-
+var credits = document.getElementById("credits");
+credits.innerHTML = `<img src="${icon_url}" id="logo">` + credits.innerHTML;
 
 chatbox.addEventListener("resize", (event) => {
     initialHeight = chatbox.offsetHeight;
@@ -112,7 +113,7 @@ function twitchLogin() {
     } else {
         url = "https://multichat.dev";
     }
-    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `${url}`, ["channel:read:redemptions", "user:read:email", "user:write:chat", "channel:moderate"] );
+    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `${url}`, ["channel:read:redemptions", "user:read:email", "user:write:chat", "channel:moderate", "user:read:follows", "moderator:manage:banned_users", "moderation:read"] );
 }
 
 function twitchLogout() {
@@ -516,14 +517,15 @@ async function chatV2() {
 
             newMessage.id = `${extra.id}`;
 
-            //Username
-            var username = document.createElement("div")
-            if(user.toLowerCase() != extra.username.toLowerCase()) {
-                username.innerText = `${user}(${extra.username})`;
-            } else {
-                username.innerText = `${user}`;
-            }
-            
+             //Username
+             var username = document.createElement("button")
+             if(user.toLowerCase() != extra.username.toLowerCase()) {
+                 username.innerText = `${user}(${extra.username})`;
+             } else {
+                 username.innerText = `${user}`;
+             }
+             username.value = `${user} ${extra.channel}`;
+             username.classList.add("btn");
 
             if(extra.userColor == null) {
                 username.style.color = "#6441a5";
@@ -653,12 +655,15 @@ async function chatV2() {
             newMessage.id = `${extra.id}`;
 
             //Username
-            var username = document.createElement("div")
+            var username = document.createElement("button")
             if(user.toLowerCase() != extra.username.toLowerCase()) {
                 username.innerText = `${user}(${extra.username})`;
             } else {
                 username.innerText = `${user}`;
             }
+            username.value = `${user} ${extra.channel}`;
+            username.classList.add("btn");
+
             
 
             if(extra.userColor == null) {
@@ -1003,4 +1008,111 @@ function sendTwitchMessage() {
     ComfyTwitch.SendMessage(clientId, broadcaster_id, sender_id, messageText);
     
     messageInput.value = "";
+}
+
+document.querySelector('#scrollable').addEventListener('click', async event => {
+    let target = event.target;
+    if (target.matches('button')) {
+        let values = target.value;
+        var valuesArray = [];
+        valuesArray = values.split(" ");
+        var value = valuesArray[0];
+        var channelId = streamerInfo[valuesArray[1]].id;
+
+        let userInformation = await ComfyTwitch.GetUser(clientId, `${value}`);
+
+        let userInfo = document.getElementById("userInfo");
+        if(userInfo != null) {
+            userInfo.innerHTML = "";
+            userInfo.remove();
+        }
+        userInfo = document.createElement("table");
+        userInfo.id = "userInfo"
+
+        var tr = document.createElement("tr");
+
+        var userHeading = document.createElement("div");
+        userHeading.classList.add("userInfoElement");
+
+        const url = `${userInformation.profile_image_url}`;
+        var userPfp = document.createElement("img");
+        userPfp.src = url;
+        userPfp.id = "userInfoPic";
+        userPfp.title = `${userInformation.display_name}`;
+        userPfp.style.margin = "auto"
+        userHeading.append(userPfp);
+
+
+        var username = document.createElement("td");
+        username.innerHTML = `<h2><a href="https://twitch.tv/${userInformation.login}" class="kuma">${userInformation.display_name}</a></h2>`;
+        username.style.textAlign = "centre";
+        username.style.left = "50%";
+        userHeading.append(username);
+
+        tr.append(userHeading);
+
+        userInfo.append(tr);
+        var tr = document.createElement("tr");
+
+        var timeCreated = document.createElement("td");
+        timeCreated.innerHTML = `<div class="userInfoElement">Date Created: ${convertDateTime(userInformation.created_at)}</div>`;
+        tr.append(timeCreated);
+
+        userInfo.append(tr);
+
+        var isMod = document.getElementById("enableMod").checked;
+        if(isMod) {
+            var tr = document.createElement("tr");
+
+            let currentUser = await ComfyTwitch.GetCurrentUser(clientId);
+            currentUserId = currentUser.id;
+     
+            var ban = document.createElement("button");
+            ban.classList.add("btn");
+            ban.classList.add("userInfoButton");
+            ban.innerText = "Ban User"
+            ban.style.paddingRight = "5px";
+            ban.onclick = await function() {
+                ComfyTwitch.BanUser(clientId, channelId, currentUserId, userInformation.id,);
+            };
+            tr.append(ban);
+
+
+            var timeout = document.createElement("button");
+            timeout.innerText = "Timeout User"
+            timeout.classList.add("btn");
+            timeout.classList.add("userInfoButton");
+            timeout.style.paddingRight = "5px";
+            timeout.onclick = await function() {
+                ComfyTwitch.TimeoutUser(clientId, channelId, currentUserId, userInformation.id, "500")
+            };
+            tr.append(timeout);
+
+            var unban = document.createElement("button");
+            unban.classList.add("btn");
+            unban.classList.add("userInfoButton");
+            unban.innerText = "Unban User"
+            unban.onclick = await function() {
+                ComfyTwitch.UnbanUser(clientId, channelId, currentUserId, userInformation.id,);
+            };
+            tr.append(unban);
+            
+
+
+            userInfo.append(tr);
+        }
+
+        document.body.appendChild(userInfo);
+    } else {
+        let userInfo = document.getElementById("userInfo");
+        if(userInfo != null) {
+            userInfo.innerHTML = "";
+            userInfo.remove();
+        }
+    }
+});
+
+function convertDateTime(dateTime) {
+    var date = new Date(dateTime);
+    return date.toDateString();
 }
