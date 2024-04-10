@@ -17,6 +17,17 @@ var ignoredUsers = [];
 var chatbox = document.getElementById("scrollable");
 var initialHeight = chatbox.offsetHeight;
 var streamerInfo = {};
+var userInfo = {};
+
+var link = document.querySelector("link[rel~='icon']");
+if (!link) {
+    link = document.createElement('link');
+    link.rel = 'icon';
+    document.head.appendChild(link);
+}
+var icon_url = getRandomIcon();
+link.href = icon_url;
+
 
 chatbox.addEventListener("resize", (event) => {
     initialHeight = chatbox.offsetHeight;
@@ -28,6 +39,47 @@ if(openStreams != null) {
     openChats();
 } else {
     checkIgnore();
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function getRandomIcon() {
+    switch(getRandomInt(16)) {
+        case 0:
+            return "icons/multichat1.png";
+        case 1:
+            return "icons/multichat2.png";
+        case 2:
+            return "icons/multichat3.png";
+        case 3:
+            return "icons/multichat4.png";
+        case 4:
+            return "icons/multichat5.png";
+        case 5:
+            return "icons/multichat6.png";
+        case 6:
+            return "icons/multichat7.png";
+        case 7:
+            return "icons/multichat8.png";
+        case 8:
+            return "icons/multichat9.png";
+        case 9:
+            return "icons/multichat10.png";
+        case 10:
+            return "icons/multichat11.png";
+        case 11:
+            return "icons/multichat12.png";
+        case 12:
+            return "icons/multichat13.png";
+        case 13:
+            return "icons/multichat14.png";
+        case 14:
+            return "icons/multichat15.png";
+        case 15:
+            return "icons/multichat16.png";
+    }
 }
 
 ComfyTwitch.Check()
@@ -51,21 +103,6 @@ function submitForm(event) {
     checkIgnore();
     openChats();
     return false;
-}
-
-function sendTwitchMessage() {
-    let messageText = document.getElementById("textInput").value;
-    var target = ["broadcast"];
-    let broadcaster = document.getElementById("streamsDropdown").value;
-    let broadcaster_id = streamerInfo[broadcaster]["id"];
-
-    var body = {
-        "message": messageText,
-        "broadcaster_id": broadcaster_id,
-        "target": target
-    }
-
-    ComfyTwitch.SendMessage(clientId, body);
 }
 
 function twitchLogin() {
@@ -418,6 +455,8 @@ async function chatV2() {
     var chat = document.querySelector("#chat>ul");
 
     let currUser = await ComfyTwitch.GetCurrentUser(clientId);
+
+    userInfo = currUser;
 
     let ffzEnabled = document.getElementById("ffz").checked;
     let bttvEnabled = document.getElementById("bttv").checked;
@@ -952,4 +991,16 @@ function addBadges(badges, global, streamerInfo, channel) {
             streamerInfo[channel].badges.push(badgeSet);
         }
     }
+}
+
+function sendTwitchMessage() {
+    let messageInput = document.getElementById("textInput");
+    let messageText = messageInput.value;
+    let sender_id = userInfo.id;
+    let broadcaster = document.getElementById("streamsDropdown").value;
+    let broadcaster_id = streamerInfo[broadcaster]["id"];
+
+    ComfyTwitch.SendMessage(clientId, broadcaster_id, sender_id, messageText);
+    
+    messageInput.value = "";
 }
