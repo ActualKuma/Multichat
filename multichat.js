@@ -114,7 +114,7 @@ function twitchLogin() {
     } else {
         url = "https://multichat.dev";
     }
-    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `${url}`, ["channel:read:redemptions", "user:read:email", "user:write:chat", "channel:moderate", "user:read:follows", "moderator:manage:banned_users", "moderation:read"] );
+    ComfyTwitch.Login( "lkcbakp0dx86jr3kvf0nazy13ubbdd", `${url}`, ["channel:read:redemptions", "user:read:email", "user:write:chat", "channel:moderate", "user:read:follows", "moderator:manage:banned_users", "moderation:read", "moderator:manage:chat_messages"] );
 }
 
 function twitchLogout() {
@@ -510,7 +510,7 @@ async function chatV2() {
         streamsDropdown.innerHTML = `${streamsDropdown.innerHTML}<option value=${channels[i]}>${channels[i]}</option>`
     
         
-        ComfyJS.onChat = (user, message, flags, self, extra) => {
+        ComfyJS.onChat = async (user, message, flags, self, extra) => {
             if(!ignoredUsers.includes(user.toLowerCase())) {
                 //Message Container
                 var newMessage = document.createElement("li");
@@ -533,6 +533,7 @@ async function chatV2() {
                 }
                 username.value = `${user} ${extra.channel}`;
                 username.classList.add("btn");
+                username.classList.add("username");
                 newMessage.classList.add(`${user.toLowerCase()}`);
 
 
@@ -642,6 +643,22 @@ async function chatV2() {
                 newMessage.append(userMessageSeperator);
                 newMessage.append(messageText);
 
+                var isMod = document.getElementById("enableMod").checked;
+                if(isMod) {
+                    var ban = document.createElement("button");
+                    ban.classList.add("btn");
+                    ban.classList.add("userInfoButton");
+                    ban.value = extra.id;
+                    ban.innerText = "[Delete]"
+                    ban.style.paddingLeft = "5px";
+                    ban.onclick = await async function() {
+                        let currentUser = await ComfyTwitch.GetCurrentUser(clientId);
+                        currentUserId = currentUser.id;
+                        ComfyTwitch.DeleteMessage(clientId, streamerInfo[extra.channel].id, currentUserId, ban.value);
+                    }
+                    newMessage.append(ban);
+                };
+
 
                 var chatbox = document.getElementById("scrollable");
                 var prevHeight = chatbox.scrollHeight;
@@ -656,7 +673,7 @@ async function chatV2() {
             }
         }
 
-        ComfyJS.onCommand = (user, message, flags, self, extra) => {
+        ComfyJS.onCommand = async (user, message, flags, self, extra) => {
             if(!ignoredUsers.includes(user.toLowerCase())) {
                 //Message Container
                 var newMessage = document.createElement("li");
@@ -681,6 +698,7 @@ async function chatV2() {
 
                 username.value = `${user} ${extra.channel}`;
                 username.classList.add("btn");
+                username.classList.add("username");
                 newMessage.classList.add(`${user.toLowerCase()}`);
 
 
@@ -791,6 +809,23 @@ async function chatV2() {
                 newMessage.appendChild(userMessageSeperator);
                 newMessage.appendChild(messageText);
 
+                var isMod = document.getElementById("enableMod").checked;
+                if(isMod) {
+                    var ban = document.createElement("button");
+                    ban.classList.add("btn");
+                    ban.className.add(`${extra.id}`);
+                    ban.classList.add("userInfoButton");
+                    ban.value = extra.id;
+                    ban.innerText = "[Delete]"
+                    ban.style.paddingLeft = "5px";
+                    ban.onclick = await async function() {
+                        let currentUser = await ComfyTwitch.GetCurrentUser(clientId);
+                        currentUserId = currentUser.id;
+                        ComfyTwitch.DeleteMessage(clientId, streamerInfo[extra.channel].id, currentUserId, ban.value);
+                    }
+                    newMessage.append(ban);
+                };
+
                 var chatbox = document.getElementById("scrollable");
                 var prevHeight = chatbox.scrollHeight;
 
@@ -808,10 +843,7 @@ async function chatV2() {
             if (!isNaN(id.charAt(0))) {
                 id = "a" + id;
             }
-            var message = document.querySelector(`#${id}>div.message`);
-            if(message != null) {
-                message.innerHTML = "&lt;message deleted&gt;";
-            }
+            deleteMessage(id);
         }
 
         ComfyJS.onBan = async (username, extra) => {
@@ -822,10 +854,7 @@ async function chatV2() {
                     if (!isNaN(id.charAt(0))) {
                         id = "a" + id;
                     }
-                    var message = document.querySelector(`#${id}>div.message`);
-                    if(message != null) {
-                        message.innerHTML = "&lt;message deleted&gt;";
-                    }
+                    deleteMessage(id);
                 }
             }
             var isMod = document.getElementById("enableMod").checked;
@@ -852,10 +881,7 @@ async function chatV2() {
                     if (!isNaN(id.charAt(0))) {
                         id = "a" + id;
                     }
-                    var message = document.querySelector(`#${id}>div.message`);
-                    if(message != null) {
-                        message.innerHTML = "&lt;message deleted&gt;";
-                    }
+                    deleteMessage(id);
                 }
             }
             var isMod = document.getElementById("enableMod").checked;
@@ -880,6 +906,13 @@ async function chatV2() {
     
 
     document.title = `multichat.dev (${streams})`
+}
+
+function deleteMessage(id) {
+    var message = document.querySelector(`#${id}>div.message`);
+    if(message != null) {
+        message.innerHTML = "&lt;message deleted&gt;";
+    }
 }
 
 function loadFFZ(streamerInfo) {
@@ -1098,7 +1131,7 @@ function sendTwitchMessage() {
 
 document.querySelector('#scrollable').addEventListener('click', async event => {
     let target = event.target;
-    if (target.matches('button')) {
+    if (target.matches('.username')) {
         let values = target.value;
         var valuesArray = [];
         valuesArray = values.split(" ");
